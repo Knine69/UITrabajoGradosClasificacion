@@ -1,6 +1,10 @@
+import FilesUploader from "./uploader/page.js"
+import DynamicParagraphs from "./paragraphs/page.js";
+
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center">
+      <FilesUploader />
       {/* Searchbar component */}
       <form className="w-full flex justify-center">
         <div className="flex w-3/6">
@@ -26,11 +30,8 @@ export default function HomePage() {
           </label>
         </div>
       </form>
-      <div className="flex justify-center mb-10 mt-5 dark:bg-slate-800 w-3/6">
-        <div className="text-l font-medium focus:border-blue-900 focus:ring-blue-900 w-full overflow-scroll overscroll-auto p-3 border border-slate-300 rounded-md">
-          Expected generated response comming from Backend
-        </div>
-      </div>
+
+      <DynamicParagraphs />
     </div>
   );
 }
