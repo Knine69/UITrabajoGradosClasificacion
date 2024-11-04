@@ -2,6 +2,7 @@
 import FilesUploader from "./uploader/page.js"
 import DynamicParagraphs from "./paragraphs/page.js";
 import { useState } from "react";
+import { constantVariables } from "./constants/constants.js";
 
 export default function HomePage() {
 
@@ -23,8 +24,8 @@ async function handleFormSubmit(e) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        "collection_name": "some_collection",
-        "category": "quimica",
+        "collection_name": constantVariables.COLLECTION_NAME,
+        "category": formValues.category.toLowerCase(),
         "user_query": formValues.search
       })
     });
@@ -54,7 +55,6 @@ async function handleFormSubmit(e) {
       ({ done, value } = await reader.read());
     }
 
-    console.log("Stream finished");
     setParagraphs(prevParagraphs => [...prevParagraphs, ...newParagraphs]);
   } catch (error) {
     console.error('Error during fetch or streaming:', error);
@@ -88,6 +88,14 @@ async function handleFormSubmit(e) {
               name="search"
             />
           </label>
+          <select name="category" className="text-[#6366f1] rounded-md ml-1">
+            <option value="chemistry">Quimica</option>
+            <option value="control">Control</option>
+            <option value="electronic">Electronica</option>
+            <option value="robotics">Robotica</option>
+            <option value="electrics">Electrica</option>
+            <option value="mecanics">Mecanica</option>
+          </select>
         </div>
       </form>
 
