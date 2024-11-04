@@ -48,7 +48,7 @@ async function handleFormSubmit(e) {
           const jsonData = event.replace("data: ", "");
           const parsedData = JSON.parse(jsonData);
           // console.log("Received data:", parsedData);
-          newParagraphs.push({"text": parsedData.DESCRIPTION, "emitter": "checker"});
+          newParagraphs.push({"text": parsedData.DESCRIPTION, "emitter": constantVariables.CHECKER_EMITTER});
         }
       });
       
