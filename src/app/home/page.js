@@ -1,7 +1,7 @@
 "use client";
 import FilesUploader from "./uploader/page.js"
 import DynamicParagraphs from "./paragraphs/page.js";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { constantVariables } from "./constants/constants.js";
 
 export default function HomePage() {
@@ -9,62 +9,68 @@ export default function HomePage() {
   const [paragraphs, setParagraphs] = useState([
     { text: 'Initial paragraph from user', emitter: 'user' },
     { text: 'Initial paragraph from checker', emitter: 'checker' },
-]);
+  ]);
 
-async function handleFormSubmit(e) {
-  e.preventDefault();
-  const formData = new FormData(e.currentTarget)
-  const formValues = Object.fromEntries(formData.entries());
-  try {
+  const [selectedOption, setSelectedOption] = useState('chemistry')
 
-    setParagraphs(prevParagraphs => [...prevParagraphs, {"text": formValues.search, "emitter": "user"}]);
-    const response = await fetch('http://localhost:5000/chroma/documents', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "collection_name": constantVariables.COLLECTION_NAME,
-        "category": formValues.category.toLowerCase(),
-        "user_query": formValues.search
-      })
-    });
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget)
+    const formValues = Object.fromEntries(formData.entries());
+    try {
 
-    formValues.search = ''
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    
-    let { done, value } = await reader.read();
-    const newParagraphs = []
-    while (!done) {
-      const chunk = decoder.decode(value, { stream: true });
-      const events = chunk.split("\n\n"); // Split on SSE event boundary
-      
-      console.log(chunk)
-
-      events.forEach(event => {
-        if (event.startsWith("data:")) {
-          const jsonData = event.replace("data: ", "");
-          const parsedData = JSON.parse(jsonData);
-          // console.log("Received data:", parsedData);
-          newParagraphs.push({"text": parsedData.DESCRIPTION, "emitter": constantVariables.CHECKER_EMITTER});
-        }
+      setParagraphs(prevParagraphs => [...prevParagraphs, {"text": formValues.search, "emitter": "user"}]);
+      const response = await fetch('http://localhost:5000/chroma/documents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "collection_name": constantVariables.COLLECTION_NAME,
+          "category": formValues.category.toLowerCase(),
+          "user_query": formValues.search
+        })
       });
-      
-      ({ done, value } = await reader.read());
-    }
 
-    setParagraphs(prevParagraphs => [...prevParagraphs, ...newParagraphs]);
-  } catch (error) {
-    console.error('Error during fetch or streaming:', error);
+      formValues.search = ''
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      
+      let { done, value } = await reader.read();
+      const newParagraphs = []
+      while (!done) {
+        const chunk = decoder.decode(value, { stream: true });
+        const events = chunk.split("\n\n"); // Split on SSE event boundary
+        
+        console.log(chunk)
+
+        events.forEach(event => {
+          if (event.startsWith("data:")) {
+            const jsonData = event.replace("data: ", "");
+            const parsedData = JSON.parse(jsonData);
+            // console.log("Received data:", parsedData);
+            newParagraphs.push({"text": parsedData.DESCRIPTION, "emitter": constantVariables.CHECKER_EMITTER});
+          }
+        });
+        
+        ({ done, value } = await reader.read());
+      }
+
+      setParagraphs(prevParagraphs => [...prevParagraphs, ...newParagraphs]);
+    } catch (error) {
+      console.error('Error during fetch or streaming:', error);
+    }
   }
-}
+
+  function handleChangeSelect(e) {
+    setSelectedOption(e.currentTarget.value)
+  }
 
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <FilesUploader />
+      <FilesUploader selectedCategory={selectedOption} />
       {/* Searchbar component */}
       <form className="w-full flex justify-center" onSubmit={handleFormSubmit}>
         <div className="flex w-3/6">
@@ -88,7 +94,7 @@ async function handleFormSubmit(e) {
               name="search"
             />
           </label>
-          <select name="category" className="text-[#6366f1] rounded-md ml-1">
+          <select onChange={handleChangeSelect} name="category" className="text-[#6366f1] rounded-md ml-1">
             <option value="chemistry">Quimica</option>
             <option value="control">Control</option>
             <option value="electronic">Electronica</option>
