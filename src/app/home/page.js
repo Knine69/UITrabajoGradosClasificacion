@@ -60,6 +60,13 @@ export default function HomePage() {
       setParagraphs(prevParagraphs => [...prevParagraphs, ...newParagraphs]);
     } catch (error) {
       console.error('Error during fetch or streaming:', error);
+
+      // Simulation response
+
+      let response = prompt("Response received from Backend: ")
+      if (response.length > 0) {
+        setParagraphs(previous => [...previous, { text: response, emitter: constantVariables.CHECKER_EMITTER }])
+      }
     }
   }
 
