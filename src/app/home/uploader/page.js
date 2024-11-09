@@ -84,7 +84,7 @@ export default function FilesUploader({ selectedCategory }) {
 
             {fileSubmitted && (
                 <>
-                    <p className='text-[#16a34a] ml-7 mt-5'>Successfully submitted your file!</p>
+                    <p className='text-[#16a34a] ml-6 mt-5'>Successfully submitted your file!</p>
                 </>
             )}
 
