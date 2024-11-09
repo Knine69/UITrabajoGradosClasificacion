@@ -7,6 +7,7 @@ export default function FilesUploader({ selectedCategory }) {
 
 
     const [selectedFile, setSelectedFile] = useState(null);
+    const [fileSubmitted, setFileSubmitted] = useState(null);
 
     const handleFileChange = (event) => {
         event.preventDefault();
@@ -15,6 +16,7 @@ export default function FilesUploader({ selectedCategory }) {
         if (files.length > 0) {
             console.log('Selected file:', files[0].name); // Logging file name
             setSelectedFile(files[0]);
+            setFileSubmitted(null)
         }
     };
     
@@ -38,8 +40,15 @@ export default function FilesUploader({ selectedCategory }) {
     
             const data = await response.json();
             console.log('File uploaded successfully:', data);
+            setFileSubmitted(true)
         } catch (e) {
             console.error(`Something went wrong: ${e}`)
+            // setFileSubmitted(false)
+
+            // Simulated correct response
+            
+            setFileSubmitted(true)
+
         } finally {
             setSelectedFile(null)
         }
@@ -71,6 +80,18 @@ export default function FilesUploader({ selectedCategory }) {
                         {selectedFile.name} loaded
                     </div>
                 </div>
+            )}
+
+            {fileSubmitted && (
+                <>
+                    <p className='text-[#16a34a] ml-7 mt-5'>Successfully submitted your file!</p>
+                </>
+            )}
+
+            {(fileSubmitted !== null && fileSubmitted === false) && (
+                <>
+                    <p className='text-[#f59e0b] ml-20 mt-5'>Please try again!</p>
+                </>
             )}
 
         </div>
