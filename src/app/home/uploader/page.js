@@ -33,7 +33,7 @@ export default function FilesUploader({ selectedCategory }) {
             formData.append('categories', selectedCategory);
             formData.append('collection_name', constantVariables.COLLECTION_NAME);
     
-            const response = await fetch('/api/upload', {
+            const response = await fetch(`${constantVariables.CHROMA_DOMAIN}${constantVariables.CHROMA_UPLOAD_FILE_ENDPOINT}`, {
                 method: 'POST',
                 body: formData,
             });

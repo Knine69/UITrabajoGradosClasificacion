@@ -1,7 +1,7 @@
 "use client";
 import FilesUploader from "./uploader/page.js"
 import DynamicParagraphs from "./paragraphs/page.js";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { constantVariables } from "./constants/constants.js";
 
 export default function HomePage() {
@@ -20,7 +20,7 @@ export default function HomePage() {
     try {
 
       setParagraphs(prevParagraphs => [...prevParagraphs, {"text": formValues.search, "emitter": "user"}]);
-      const response = await fetch('http://localhost:5000/chroma/documents', {
+      const response = await fetch(`${constantVariables.CHROMA_DOMAIN}${constantVariables.CHROMA_MAKE_QUERY_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
