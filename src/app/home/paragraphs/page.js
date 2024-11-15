@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react';
 
-export default function DynamicParagraphs({ paragraphs }) {
+export default function DynamicParagraphs({ paragraphs = [] }) {
 
     return (
         <div className="flex flex-col mb-0.5 mt-5 dark:bg-slate-600 shadow-2xl w-5/6 rounded-md p-8">

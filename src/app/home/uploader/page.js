@@ -43,11 +43,11 @@ export default function FilesUploader({ selectedCategory }) {
             setFileSubmitted(true)
         } catch (e) {
             console.error(`Something went wrong: ${e}`)
-            // setFileSubmitted(false)
+            setFileSubmitted(false)
 
             // Simulated correct response
             
-            setFileSubmitted(true)
+            // setFileSubmitted(true)
 
         } finally {
             setSelectedFile(null)
