@@ -7,8 +7,7 @@ import { constantVariables } from "./constants/constants.js";
 export default function HomePage() {
 
   const [paragraphs, setParagraphs] = useState([
-    { text: 'Initial paragraph from user', emitter: 'user' },
-    { text: 'Initial paragraph from checker', emitter: 'checker' },
+    { text: 'Please ask your questions!', emitter: 'checker' },
   ]);
 
   const [selectedOption, setSelectedOption] = useState('chemistry')
@@ -50,7 +49,11 @@ export default function HomePage() {
             const jsonData = event.replace("data: ", "");
             const parsedData = JSON.parse(jsonData);
             // console.log("Received data:", parsedData);
-            newParagraphs.push({"text": parsedData.DESCRIPTION, "emitter": constantVariables.CHECKER_EMITTER});
+            newParagraphs.push(
+              {
+                "text": parsedData.DESCRIPTION !== "" ? parsedData.DESCRIPTION : "Sorry, I don't have any data related to your query",
+                "emitter": constantVariables.CHECKER_EMITTER
+              });
           }
         });
         
