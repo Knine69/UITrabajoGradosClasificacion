@@ -4,7 +4,7 @@ export default function DynamicParagraphs({ paragraphs = [] }) {
 
     return (
         <div className="flex flex-col mb-0.5 mt-5 dark:bg-slate-600 shadow-2xl w-5/6 rounded-md p-8">
-            <div className=' h-96 overflow-y-scroll'>
+            <div className=' h-96 overflow-y-scroll no-scrollbar'>
                 {paragraphs.map((paragraph, index) => (
                     <div
                         key={index}
