@@ -49,7 +49,7 @@ export default function HomePage() {
             // console.log("Received data:", parsedData);
             newParagraphs.push(
               {
-                "text": parsedData.result.DESCRIPTION.length > 0 ? parsedData.result.DESCRIPTION : "Sorry, I currently do not have data related to your query.",
+                "text": parsedData.result.STATUS === "SUCCESS" ? parsedData.result.RESPONSE_DATA.DESCRIPTION : parsedData.result.DESCRIPTION,
                 "emitter": constantVariables.CHECKER_EMITTER
               }  
             );
