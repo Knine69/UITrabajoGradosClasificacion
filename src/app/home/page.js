@@ -46,10 +46,10 @@ export default function HomePage() {
           if (event.startsWith("data:")) {
             const jsonData = event.replace("data: ", "");
             const parsedData = JSON.parse(jsonData);
-            console.log("Received data:", parsedData);
+            // console.log("Received data:", parsedData);
             newParagraphs.push(
               {
-                "text": parsedData.DESCRIPTION.length > 0 ? parsedData.DESCRIPTION : "Sorry, I currently do not have data related to your query.",
+                "text": parsedData.result.DESCRIPTION.length > 0 ? parsedData.result.DESCRIPTION : "Sorry, I currently do not have data related to your query.",
                 "emitter": constantVariables.CHECKER_EMITTER
               }  
             );
