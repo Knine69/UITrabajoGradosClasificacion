@@ -105,12 +105,12 @@ export default function HomePage() {
             />
           </label>
           <select onChange={handleChangeSelect} name="category" className="text-[#6366f1] rounded-md ml-1">
-            <option value="chemistry">Quimica</option>
+            <option value="quimica">Quimica</option>
             <option value="control">Control</option>
-            <option value="electronic">Electronica</option>
-            <option value="robotics">Robotica</option>
-            <option value="electrics">Electrica</option>
-            <option value="mecanics">Mecanica</option>
+            <option value="electronica">Electronica</option>
+            <option value="robotica">Robotica</option>
+            <option value="electrica">Electrica</option>
+            <option value="mecanica">Mecanica</option>
           </select>
         </div>
       </form>
