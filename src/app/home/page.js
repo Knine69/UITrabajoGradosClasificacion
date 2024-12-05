@@ -10,7 +10,7 @@ export default function HomePage() {
     { text: 'Please ask your questions!', emitter: 'checker' },
   ]);
 
-  const [selectedOption, setSelectedOption] = useState('chemistry')
+  const [selectedOption, setSelectedOption] = useState('quimica')
 
   async function handleFormSubmit(e) {
     e.preventDefault();
