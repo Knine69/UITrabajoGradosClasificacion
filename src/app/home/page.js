@@ -40,15 +40,13 @@ export default function HomePage() {
       const newParagraphs = []
       while (!done) {
         const chunk = decoder.decode(value, { stream: true });
-        const events = chunk.split("\n\n"); // Split on SSE event boundary
-        
-        console.log(chunk)
+        const events = chunk.split("\n\n");
 
         events.forEach(event => {
           if (event.startsWith("data:")) {
             const jsonData = event.replace("data: ", "");
             const parsedData = JSON.parse(jsonData);
-            // console.log("Received data:", parsedData);
+            console.log("Received data:", parsedData);
             newParagraphs.push(
               {
                 "text": parsedData.DESCRIPTION.length > 0 ? parsedData.DESCRIPTION : "Sorry, I currently do not have data related to your query.",
