@@ -38,10 +38,28 @@ export default function FilesUploader({ selectedCategory }) {
                 method: 'POST',
                 body: formData,
             });
-    
-            const data = await response.json();
-            console.log('File uploaded successfully:', data);
-            setFileSubmitted(true)
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            
+            let { done, value } = await reader.read();
+            while (!done) {
+                const chunk = decoder.decode(value, { stream: true });
+                const events = chunk.split("\n\n");
+
+                events.forEach(event => {
+                if (event.startsWith("data:")) {
+                    const jsonData = event.replace("data: ", "");
+                    const parsedData = JSON.parse(jsonData);
+                    console.log('File uploaded successfully:', parsedData.result.DESCRIPTION);
+                    setFileSubmitted(true)
+                    // console.log("Received data:", parsedData);
+                }
+                });
+                
+                ({ done, value } = await reader.read());
+            }
+            
         } catch (e) {
             console.error(`Something went wrong: ${e}`)
             setFileSubmitted(false)
