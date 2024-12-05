@@ -51,9 +51,10 @@ export default function HomePage() {
             // console.log("Received data:", parsedData);
             newParagraphs.push(
               {
-                "text": parsedData.DESCRIPTION !== "" ? parsedData.DESCRIPTION : "Sorry, I don't have any data related to your query",
+                "text": parsedData.DESCRIPTION.length > 0 ? parsedData.DESCRIPTION : "Sorry, I currently do not have data related to your query.",
                 "emitter": constantVariables.CHECKER_EMITTER
-              });
+              }  
+            );
           }
         });
         
