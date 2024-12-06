@@ -51,13 +51,33 @@ export default function HomePage() {
             const jsonData = event.replace("data: ", "");
             const parsedData = JSON.parse(jsonData);
             console.log("Received data:", parsedData);
-            newParagraphs.push({
-              text:
-                parsedData.result.STATE === "SUCCESS"
-                  ? JSON.parse(parsedData.result.RESPONSE_DATA.DESCRIPTION)
-                  : parsedData.result.DESCRIPTION,
-              emitter: constantVariables.CHECKER_EMITTER,
-            });
+
+            // Error during outer layer of event processing
+            if (parsedData.state === "ERROR") {
+              newParagraphs.push({
+                text: JSON.parse(parsedData.message),
+                emitter: constantVariables.CHECKER_EMITTER,
+              });
+            }
+
+            if (parsedData.state === "SUCCESS") {
+              // Error during request processing
+              if (parsedData.result.STATE === "ERROR") {
+                newParagraphs.push({
+                  text: parsedData.result.DESCRIPTION,
+                  emitter: constantVariables.CHECKER_EMITTER,
+                });
+              }
+              // Possible response based on LLM output
+              if (parsedData.result.STATE === "SUCCESS") {
+                newParagraphs.push({
+                  text: parsedData.result.RESPONSE_DATA.STATE
+                    ? JSON.parse(parsedData.result.RESPONSE_DATA.RESPONSE)
+                    : parsedData.result.RESPONSE_DATA.DESCRIPTION,
+                  emitter: constantVariables.CHECKER_EMITTER,
+                });
+              }
+            }
           }
         });
 

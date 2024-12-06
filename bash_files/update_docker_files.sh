@@ -2,7 +2,7 @@
 
 echo "Building and updating Gaunal Library UI Docker Image..."
 
-docker build -f Dockerfile --platform linux/amd64 -t jhuguet/gaunal-library-ui:4.0.13 .
-docker tag gaunal-library-ui:4.0.13 jhuguet/gaunal-library-ui:latest
-docker push jhuguet/gaunal-library-ui:4.0.13
+docker build -f Dockerfile --platform linux/amd64 -t jhuguet/gaunal-library-ui:4.0.14 .
+docker tag gaunal-library-ui:4.0.14 jhuguet/gaunal-library-ui:latest
+docker push jhuguet/gaunal-library-ui:4.0.14
 
