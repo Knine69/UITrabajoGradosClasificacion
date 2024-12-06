@@ -49,8 +49,8 @@ export default function HomePage() {
             console.log("Received data:", parsedData);
             newParagraphs.push(
               {
-                "text": parsedData.STATUS === "SUCCESS" ? parsedData.result.RESPONSE : parsedData.result.DESCRIPTION,
-                "emitter": constantVariables.CHECKER_EMITTER
+                text: parsedData.STATUS === "SUCCESS" ? parsedData.result.RESPONSE : parsedData.result.DESCRIPTION,
+                emitter: constantVariables.CHECKER_EMITTER
               }  
             );
           }
