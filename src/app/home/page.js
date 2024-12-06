@@ -53,7 +53,7 @@ export default function HomePage() {
             console.log("Received data:", parsedData);
             newParagraphs.push({
               text:
-                parsedData.state === "SUCCESS"
+                parsedData.result.STATE === "SUCCESS"
                   ? JSON.parse(parsedData.result.RESPONSE_DATA.DESCRIPTION)
                   : parsedData.result.DESCRIPTION,
               emitter: constantVariables.CHECKER_EMITTER,
