@@ -46,7 +46,7 @@ export default function HomePage() {
           if (event.startsWith("data:")) {
             const jsonData = event.replace("data: ", "");
             const parsedData = JSON.parse(jsonData);
-            // console.log("Received data:", parsedData);
+            console.log("Received data:", parsedData);
             newParagraphs.push(
               {
                 "text": parsedData.result.STATUS === "SUCCESS" ? parsedData.result.RESPONSE_DATA.DESCRIPTION.RESPONSE : parsedData.result.DESCRIPTION,
