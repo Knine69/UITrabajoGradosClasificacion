@@ -37,74 +37,108 @@ export default function HomePage() {
 
       formValues.search = "";
 
+      // Initialize variables for streaming
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
 
-      let { done, value } = await reader.read();
+      let bufferedChunk = ""; // Buffer for partial chunks
+      let done = false;
+
       const newParagraphs = [];
+
       while (!done) {
-        const chunk = decoder.decode(value, { stream: true });
-        const events = chunk.split("\n\n");
+        // Read a chunk
+        const { value, done: isDone } = await reader.read();
+        done = isDone;
 
-        events.forEach((event) => {
-          if (event.startsWith("data:")) {
-            const jsonData = event.replace("data: ", "");
-            const parsedData = JSON.parse(jsonData);
-            console.log("Received data:", parsedData);
+        if (value) {
+          // Decode the chunk
+          bufferedChunk += decoder.decode(value, { stream: true });
 
-            // Error during outer layer of event processing
-            if (parsedData.state === "ERROR") {
-              newParagraphs.push({
-                text: JSON.parse(parsedData.message),
-                emitter: constantVariables.CHECKER_EMITTER,
-              });
-            }
+          // Split events by the double newline delimiter
+          const events = bufferedChunk.split("\n\n");
 
-            if (parsedData.state === "SUCCESS") {
-              // Error during request processing
-              if (parsedData.result.STATE === "ERROR") {
-                newParagraphs.push({
-                  text: parsedData.result.DESCRIPTION,
-                  emitter: constantVariables.CHECKER_EMITTER,
-                });
-              }
-              // Possible response based on LLM output
-              if (parsedData.result.STATE === "SUCCESS") {
-                newParagraphs.push({
-                  text: parsedData.result.RESPONSE_DATA.STATE
-                    ? JSON.parse(parsedData.result.RESPONSE_DATA.RESPONSE)
-                    : parsedData.result.RESPONSE_DATA.DESCRIPTION,
-                  emitter: constantVariables.CHECKER_EMITTER,
-                });
-              }
+          // Process all complete events except the last one (it may be incomplete)
+          for (let i = 0; i < events.length - 1; i++) {
+            const event = events[i];
 
-              if (parsedData.result.STATE === true) {
-                newParagraphs.push({
-                  text:
-                    typeof parsedData.result.RESPONSE === "string"
-                      ? parsedData.result.RESPONSE
-                      : JSON.parse(parsedData.result.RESPONSE),
-                  emitter: constantVariables.CHECKER_EMITTER,
-                });
+            if (event.startsWith("data:")) {
+              try {
+                const jsonData = event.replace("data: ", "").trim();
+                const parsedData = JSON.parse(jsonData);
+
+                console.log("Received data:", parsedData);
+
+                // Error during outer layer of event processing
+                if (parsedData.state === "ERROR") {
+                  newParagraphs.push({
+                    text: JSON.parse(parsedData.message),
+                    emitter: constantVariables.CHECKER_EMITTER,
+                  });
+                }
+
+                if (parsedData.state === "SUCCESS") {
+                  // Error during request processing
+                  if (parsedData.result.STATE === "ERROR") {
+                    newParagraphs.push({
+                      text: parsedData.result.DESCRIPTION,
+                      emitter: constantVariables.CHECKER_EMITTER,
+                    });
+                  }
+                  // Possible response based on LLM output
+                  if (parsedData.result.STATE === "SUCCESS") {
+                    newParagraphs.push({
+                      text: parsedData.result.RESPONSE_DATA.STATE
+                        ? JSON.parse(parsedData.result.RESPONSE_DATA.RESPONSE)
+                        : parsedData.result.RESPONSE_DATA.DESCRIPTION,
+                      emitter: constantVariables.CHECKER_EMITTER,
+                    });
+                  }
+
+                  if (parsedData.result.STATE === true) {
+                    newParagraphs.push({
+                      text:
+                        typeof parsedData.result.RESPONSE === "string"
+                          ? parsedData.result.RESPONSE
+                          : JSON.parse(parsedData.result.RESPONSE),
+                      emitter: constantVariables.CHECKER_EMITTER,
+                    });
+                  }
+                }
+              } catch (error) {
+                console.error("Error parsing JSON:", error.message);
               }
             }
           }
-        });
 
-        ({ done, value } = await reader.read());
+          // Keep the last part of the chunk (it may be incomplete)
+          bufferedChunk = events[events.length - 1];
+        }
       }
+
+      // Handle any leftover buffered data
+      if (bufferedChunk.trim() && bufferedChunk.startsWith("data:")) {
+        try {
+          const jsonData = bufferedChunk.replace("data: ", "").trim();
+          const parsedData = JSON.parse(jsonData);
+          console.log("Final chunk received data:", parsedData);
+
+          if (parsedData.state === "SUCCESS") {
+            newParagraphs.push({
+              text: parsedData.result?.RESPONSE,
+              emitter: constantVariables.CHECKER_EMITTER,
+            });
+          }
+        } catch (error) {
+          console.error("Error parsing final JSON chunk:", error.message);
+        }
+      }
+
+      console.log("Final paragraphs:", newParagraphs);
 
       setParagraphs((prevParagraphs) => [...prevParagraphs, ...newParagraphs]);
     } catch (error) {
       console.error("Error during fetch or streaming:", error);
-
-      /* Simulation response
-
-      let response = prompt("Response received from Backend: ")
-      if (response.length > 0) {
-        setParagraphs(previous => [...previous, { text: response, emitter: constantVariables.CHECKER_EMITTER }])
-      }
-        */
     }
   }
 
