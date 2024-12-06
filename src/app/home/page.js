@@ -77,6 +77,13 @@ export default function HomePage() {
                   emitter: constantVariables.CHECKER_EMITTER,
                 });
               }
+
+              if(parsedData.result.STATE === true) {
+                newParagraphs.push({
+                  text: JSON.parse(parsedData.result.RESPONSE),
+                  emitter: constantVariables.CHECKER_EMITTER,
+                });
+              }
             }
           }
         });
