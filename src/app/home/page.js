@@ -78,9 +78,12 @@ export default function HomePage() {
                 });
               }
 
-              if(parsedData.result.STATE === true) {
+              if (parsedData.result.STATE === true) {
                 newParagraphs.push({
-                  text: JSON.parse(parsedData.result.RESPONSE),
+                  text:
+                    typeof parsedData.result.RESPONSE === "string"
+                      ? parsedData.result.RESPONSE
+                      : JSON.parse(parsedData.result.RESPONSE),
                   emitter: constantVariables.CHECKER_EMITTER,
                 });
               }

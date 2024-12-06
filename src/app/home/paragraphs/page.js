@@ -12,7 +12,7 @@ export default function DynamicParagraphs({ paragraphs = [] }) {
             }`}
           >
             <div
-              className={`text-l font-medium focus:border-blue-900 focus:ring-blue-900 w-auto overflow-scroll overscroll-auto p-3 rounded text-white ${
+              className={`text-l font-medium focus:border-blue-900 focus:ring-blue-900 w-auto overflow-y-scroll no-scrollbar p-3 rounded text-white ${
                 paragraph.emitter === "user" ? "bg-[#1e1b4b]" : "bg-[#4a044e]"
               }`}
             >
