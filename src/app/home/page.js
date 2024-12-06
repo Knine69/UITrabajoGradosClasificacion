@@ -1,67 +1,72 @@
 "use client";
-import FilesUploader from "./uploader/page.js"
+import FilesUploader from "./uploader/page.js";
 import DynamicParagraphs from "./paragraphs/page.js";
 import { useState } from "react";
 import { constantVariables } from "./constants/constants.js";
 
 export default function HomePage() {
-
   const [paragraphs, setParagraphs] = useState([
-    { text: 'Please ask your questions!', emitter: 'checker' },
+    { text: "Please ask your questions!", emitter: "checker" },
   ]);
 
-  const [selectedOption, setSelectedOption] = useState('quimica')
+  const [selectedOption, setSelectedOption] = useState("quimica");
 
   async function handleFormSubmit(e) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget)
+    const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
     try {
+      setParagraphs((prevParagraphs) => [
+        ...prevParagraphs,
+        { text: formValues.search, emitter: "user" },
+      ]);
+      const response = await fetch(
+        `${constantVariables.CHROMA_DOMAIN}${constantVariables.CHROMA_MAKE_QUERY_ENDPOINT}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            collection_name: constantVariables.COLLECTION_NAME,
+            category: formValues.category.toLowerCase(),
+            user_query: formValues.search,
+          }),
+        }
+      );
 
-      setParagraphs(prevParagraphs => [...prevParagraphs, {"text": formValues.search, "emitter": "user"}]);
-      const response = await fetch(`${constantVariables.CHROMA_DOMAIN}${constantVariables.CHROMA_MAKE_QUERY_ENDPOINT}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          "collection_name": constantVariables.COLLECTION_NAME,
-          "category": formValues.category.toLowerCase(),
-          "user_query": formValues.search
-        })
-      });
-
-      formValues.search = ''
+      formValues.search = "";
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
-      
+
       let { done, value } = await reader.read();
-      const newParagraphs = []
+      const newParagraphs = [];
       while (!done) {
         const chunk = decoder.decode(value, { stream: true });
         const events = chunk.split("\n\n");
 
-        events.forEach(event => {
+        events.forEach((event) => {
           if (event.startsWith("data:")) {
             const jsonData = event.replace("data: ", "");
             const parsedData = JSON.parse(jsonData);
             console.log("Received data:", parsedData);
-            newParagraphs.push(
-              {
-                text: parsedData.STATUS === "SUCCESS" ? parsedData.result.RESPONSE : parsedData.result.DESCRIPTION,
-                emitter: constantVariables.CHECKER_EMITTER
-              }  
-            );
+            newParagraphs.push({
+              text:
+                parsedData.state === "SUCCESS"
+                  ? JSON.parse(parsedData.result.RESPONSE_DATA.DESCRIPTION)
+                  : parsedData.result.DESCRIPTION,
+              emitter: constantVariables.CHECKER_EMITTER,
+            });
           }
         });
-        
+
         ({ done, value } = await reader.read());
       }
 
-      setParagraphs(prevParagraphs => [...prevParagraphs, ...newParagraphs]);
+      setParagraphs((prevParagraphs) => [...prevParagraphs, ...newParagraphs]);
     } catch (error) {
-      console.error('Error during fetch or streaming:', error);
+      console.error("Error during fetch or streaming:", error);
 
       /* Simulation response
 
@@ -74,9 +79,8 @@ export default function HomePage() {
   }
 
   function handleChangeSelect(e) {
-    setSelectedOption(e.currentTarget.value)
+    setSelectedOption(e.currentTarget.value);
   }
-
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -104,7 +108,11 @@ export default function HomePage() {
               name="search"
             />
           </label>
-          <select onChange={handleChangeSelect} name="category" className="text-[#6366f1] rounded-md ml-1">
+          <select
+            onChange={handleChangeSelect}
+            name="category"
+            className="text-[#6366f1] rounded-md ml-1"
+          >
             <option value="quimica">Quimica</option>
             <option value="control">Control</option>
             <option value="electronica">Electronica</option>
@@ -115,7 +123,7 @@ export default function HomePage() {
         </div>
       </form>
 
-      <DynamicParagraphs paragraphs={paragraphs}/>
+      <DynamicParagraphs paragraphs={paragraphs} />
     </div>
   );
 }
