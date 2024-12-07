@@ -12,7 +12,6 @@ export default function FilesUploader({ selectedCategory }) {
     const handleFileChange = (event) => {
         event.preventDefault();
         const files = event.target.files;
-        console.log('File upload gave:', files);
         if (files.length > 0) {
             console.log('Selected file:', files[0].name); // Logging file name
             setSelectedFile(files[0]);
@@ -53,7 +52,6 @@ export default function FilesUploader({ selectedCategory }) {
                     const parsedData = JSON.parse(jsonData);
                     console.log('File uploaded successfully:', parsedData.result.DESCRIPTION);
                     setFileSubmitted(true)
-                    // console.log("Received data:", parsedData);
                 }
                 });
                 

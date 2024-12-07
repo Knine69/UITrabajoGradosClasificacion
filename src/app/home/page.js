@@ -67,8 +67,6 @@ export default function HomePage() {
                 const jsonData = event.replace("data: ", "").trim();
                 const parsedData = JSON.parse(jsonData);
 
-                console.log("Received data:", parsedData);
-
                 // Error during outer layer of event processing
                 if (parsedData.state === "ERROR") {
                   newParagraphs.push({
@@ -121,7 +119,6 @@ export default function HomePage() {
         try {
           const jsonData = bufferedChunk.replace("data: ", "").trim();
           const parsedData = JSON.parse(jsonData);
-          console.log("Final chunk received data:", parsedData);
 
           if (parsedData.state === "SUCCESS") {
             newParagraphs.push({
@@ -133,8 +130,6 @@ export default function HomePage() {
           console.error("Error parsing final JSON chunk:", error.message);
         }
       }
-
-      console.log("Final paragraphs:", newParagraphs);
 
       setParagraphs((prevParagraphs) => [...prevParagraphs, ...newParagraphs]);
     } catch (error) {
