@@ -10,6 +10,8 @@ export default function FilesUploader({ selectedCategory }) {
     const [fileSubmitted, setFileSubmitted] = useState(null);
 
     const handleFileChange = (event) => {
+        setSelectedFile(null);
+        setFileSubmitted(null);
         event.preventDefault();
         const files = event.target.files;
         if (files.length > 0) {
@@ -61,10 +63,6 @@ export default function FilesUploader({ selectedCategory }) {
         } catch (e) {
             console.error(`Something went wrong: ${e}`)
             setFileSubmitted(false)
-
-            // Simulated correct response
-            
-            // setFileSubmitted(true)
 
         } finally {
             setSelectedFile(null)
