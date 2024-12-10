@@ -90,8 +90,8 @@ export default function FilesUploader({ selectedCategory }) {
                 <button onClick={handleFileUpload} className='bg-[#a11bb5] px-4 py-2 rounded hover:bg-[#c084fc]'>Upload File</button>
             </div>
             {selectedFile && (
-                <div className="w-1/2 rounded-full h-1.5 mt-4 overflow-hidden">
-                    <div className="bg-blue-600 h-4 rounded-full dark:bg-blue-500 text-center text-xs pb-1 font-medium truncate" style={{"width": "100%", "marginLeft": "-10px"}}>
+                <div className="w-1/2 rounded-full h-1.5 mt-4">
+                    <div className="bg-blue-600 h-4 rounded-full dark:bg-blue-500 text-center text-xs pb-1 pl-1 font-medium truncate" style={{"width": "100%", "marginLeft": "-10px"}}>
                         {selectedFile.name} loaded
                     </div>
                 </div>
